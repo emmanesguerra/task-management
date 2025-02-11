@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import HomeView from '@/views/Home.vue';
 import LoginView from '@/views/Login.vue';
 import Navbar from '@/components/Navbar.vue';
+import projectRoutes from '@/modules/projects/router';
 
 const routes = [
   {
@@ -18,14 +19,7 @@ const routes = [
     name: 'login',
     component: LoginView,
   },
-  {
-    path: '/projects',
-    name: 'projects',
-    components: {
-      default: () => import('@/modules/projects/views/Projects.vue'),
-      navbar: Navbar,
-    },
-  },
+  ...projectRoutes,
   {
     path: '/tasks',
     name: 'tasks',
