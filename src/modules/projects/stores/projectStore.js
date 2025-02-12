@@ -18,8 +18,9 @@ export const useProjectStore = defineStore("projectStore", {
     // Fetch all projects from the API and map to ProjectModel
     async fetchProjects() {
       try {
-        const data = await projectService.get("/projects");
-        this.projects = data.map((item) => new ProjectModel(item));
+        const response = await projectService.getAllProjects();
+        this.projects = response.data.map((item) => new ProjectModel(item));
+
       } catch (error) {
         console.error("Error fetching projects:", error);
       }
@@ -28,7 +29,7 @@ export const useProjectStore = defineStore("projectStore", {
     // Add a new project
     async addProject(projectData) {
       try {
-        const response = await projectService.post("/projects", projectData);
+        const response = await projectService.createProject(projectData);
         const newProject = new ProjectModel(response.data);
         this.projects.push(newProject);
       } catch (error) {

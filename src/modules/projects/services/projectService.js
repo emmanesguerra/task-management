@@ -1,61 +1,25 @@
-import axios from "axios";
+import axios from 'axios';
 
-const projectService = {
-    // Base setup
-    init(baseURL) {
-        axios.defaults.baseURL = baseURL;
-    },
+const API_URL = import.meta.env.VITE_API_URL + '/api/projects';
 
-    // Set the Authorization token
-    setToken(token) {
-        axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-    },
+export default {
+  async getAllProjects() {
+    return axios.get(API_URL);
+  },
 
-    // GET request
-    async get(resource, params = {}) {
-        try {
-            const response = await axios.get(resource, { params });
-            return response.data;
-        } catch (error) {
-            ApiService.handleError(error);
-        }
-    },
+  async getProjectById(id) {
+    return axios.get(`${API_URL}/${id}`);
+  },
 
-    // POST request
-    async post(resource, data) {
-        try {
-            const response = await axios.post(resource, data);
-            return response.data;
-        } catch (error) {
-            ApiService.handleError(error);
-        }
-    },
+  async createProject(data) {
+    return axios.post(API_URL, data);
+  },
 
-    // PUT request
-    async put(resource, data) {
-        try {
-            const response = await axios.put(resource, data);
-            return response.data;
-        } catch (error) {
-            ApiService.handleError(error);
-        }
-    },
+  async updateProject(id, data) {
+    return axios.put(`${API_URL}/${id}`, data);
+  },
 
-    // DELETE request
-    async delete(resource) {
-        try {
-            const response = await axios.delete(resource);
-            return response.data;
-        } catch (error) {
-            ApiService.handleError(error);
-        }
-    },
-
-    // Handle errors
-    handleError(error) {
-        console.error("API Error:", error);
-        throw error.response ? error.response.data : error;
-    },
+  async deleteProject(id) {
+    return axios.delete(`${API_URL}/${id}`);
+  },
 };
-
-export default projectService;
