@@ -1,7 +1,10 @@
 <template>
   <div>
     <h1>Projects</h1>
-    <table>
+    <div class="d-flex justify-content-end">
+      <router-link :to="{ name: 'ProjectAdd' }" class="btn btn-sm btn-primary">Add New Project</router-link>
+    </div>
+    <table class="table small table-striped table-hover my-3">
       <thead>
         <tr>
           <th>#</th>
@@ -30,8 +33,8 @@
           <td>{{ project.isActive() ? 'Yes' : 'No' }}</td>
           <td>{{ project.isDeleted() ? 'Yes' : 'No' }}</td>
           <td>
-            <button class="btn btn-sm btn-primary" @click="editProject(project)">Edit</button>
-            <button class="btn btn-sm btn-dark" @click="deleteProject(project.id)">Delete</button>
+            <button class="btn btn-sm btn-dark" @click="editProject(project)">Edit</button>
+            <button class="btn btn-sm btn-danger" @click="deleteProject(project.id)">Delete</button>
           </td>
         </tr>
       </tbody>
@@ -69,6 +72,8 @@ table {
 th, td {
   border: 1px solid #ddd;
   padding: 8px;
+  text-align: center;
+  vertical-align: middle;
 }
 
 th {
