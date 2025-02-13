@@ -1,45 +1,98 @@
 <template>
-    <div>
-        <b-form @submit.prevent="handleSubmit">
-            <b-form-group label="Project Name">
-                <b-form-input v-model="form.name" required></b-form-input>
-            </b-form-group>
-            <b-form-group label="Description">
-                <b-form-textarea v-model="form.description"></b-form-textarea>
-            </b-form-group>
-            <b-button type="submit" variant="primary">
-                {{ isEdit ? 'Update Project' : 'Add Project' }}
-            </b-button>
-        </b-form>
+  <BForm @submit="onSubmit">
+    <BFormFloatingLabel label="Project Name" label-for="floatingName" class="my-3">
+      <BFormInput id="floatingName" type="text" v-model="form.name" placeholder="Project Name" />
+    </BFormFloatingLabel>
+    
+    <BFormFloatingLabel label="Project Description" label-for="floatingDesc" class="my-3">
+      <BFormTextarea 
+        id="floatingDesc" 
+        placeholder="Project Description"
+        v-model="form.description"
+        style="height: 6rem" 
+      />
+    </BFormFloatingLabel>
+    
+    <div class="row my-3">
+      <div class="col-lg-3">
+        <BFormFloatingLabel label="Budget" label-for="floatingBudget">
+          <BFormInput id="floatingBudget" type="number" v-model.number="form.budget" placeholder="Budget" />
+        </BFormFloatingLabel>
+      </div>
+      
+      <div class="col-lg-3">
+        <BFormFloatingLabel label="Start Date" label-for="floatingSD">
+          <BFormInput id="floatingSD" type="date" v-model="form.start_date" placeholder="Start Date" />
+        </BFormFloatingLabel>
+      </div>
+      
+      <div class="col-lg-3">
+        <BFormFloatingLabel label="End Date" label-for="floatingED">
+          <BFormInput id="floatingED" type="date" v-model="form.end_date" placeholder="End Date" />
+        </BFormFloatingLabel>
+      </div>
+      
+      <div class="col-lg-3">
+        <BFormFloatingLabel label="Status" label-for="floatingStatus">
+          <BFormSelect id="floatingStatus" v-model="form.status" :options="statusOptions" />
+        </BFormFloatingLabel>
+      </div>
     </div>
+
+    <div class="text-center">
+      <BButton type="submit" variant="dark" class="mx-2 col-2">{{ isEdit ? 'Update' : 'Submit' }}</BButton>
+      <BButton type="reset" @click="onReset" class="mx-2 col-2">Reset</BButton>
+    </div>
+  </BForm>
+
+  <BCard class="mt-3" header="Form Data Result">
+    <pre class="m-0">{{ form }}</pre>
+  </BCard>
 </template>
 
-<script>
-import { reactive, toRefs } from "vue";
+<script setup lang="ts">
+import { defineProps, defineEmits, reactive, watch, nextTick, ref } from 'vue'
 
-export default {
-    props: {
-        project: {
-            type: Object,
-            default: () => ({}),
-        },
-        isEdit: {
-            type: Boolean,
-            default: false,
-        },
-    },
-    emits: ["submit"],
-    setup(props, { emit }) {
-        const form = reactive({
-            name: props.project.name || "",
-            description: props.project.description || "",
-        });
+const props = defineProps({
+  project: {
+    type: Object,
+    default: () => ({
+      name: '',
+      description: '',
+      budget: null,
+      start_date: null,
+      end_date: null,
+      status: null,
+    }),
+  },
+  isEdit: {
+    type: Boolean,
+    default: false,
+  },
+})
 
-        const handleSubmit = () => {
-            emit("submit", { ...form });
-        };
+const emit = defineEmits(['submitForm'])
 
-        return { ...toRefs(form), handleSubmit };
-    },
-};
+const form = reactive({ ...props.project })
+
+const statusOptions = [
+  { value: null, text: 'Please select a status' },
+  { value: 'pending', text: 'Pending' },
+  { value: 'ongoing', text: 'Ongoing' },
+  { value: 'completed', text: 'Completed' },
+  { value: 'cancelled', text: 'Cancelled' },
+]
+
+watch(() => props.project, (newProject) => {
+  Object.assign(form, newProject)
+}, { deep: true, immediate: true })
+
+const onSubmit = (event: Event) => {
+  event.preventDefault()
+  emit('submitForm', form)
+}
+
+const onReset = () => {
+  Object.assign(form, props.project)
+}
 </script>
