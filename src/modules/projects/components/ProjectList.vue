@@ -26,14 +26,14 @@
           <td>{{ project.name }}</td>
           <td>{{ project.description }}</td>
           <td>{{ project.budget }}</td>
-          <td>{{ project.startDate }}</td>
-          <td>{{ project.endDate }}</td>
+          <td>{{ project.start_date }}</td>
+          <td>{{ project.end_date }}</td>
           <td>{{ project.status }}</td>
           <td>{{ project.getDuration() }}</td>
           <td>{{ project.isActive() ? 'Yes' : 'No' }}</td>
           <td>{{ project.isDeleted() ? 'Yes' : 'No' }}</td>
           <td>
-            <button class="btn btn-sm btn-dark" @click="editProject(project)">Edit</button>
+            <button class="btn btn-sm btn-dark" @click="editProject(project.id)">Edit</button>
             <button class="btn btn-sm btn-danger" @click="deleteProject(project.id)">Delete</button>
           </td>
         </tr>
@@ -42,25 +42,29 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import { onMounted, computed } from "vue";
+import { useRouter } from "vue-router";
 import { useProjectStore } from "@/modules/projects/stores/projectStore";
 
-export default {
-  setup() {
-    const projectStore = useProjectStore();
+const projectStore = useProjectStore();
+const router = useRouter();
 
-    onMounted(() => {
-      projectStore.fetchProjects(); // Ensure this method exists in your store
-    });
+const projects = computed(() => projectStore.projects);
 
-    return {
-      projects: computed(() => projectStore.projects),
-      deleteProject: projectStore.deleteProject,
-    };
-  },
+const fetchProjects = async () => {
+  await projectStore.fetchProjects();
 };
 
+const editProject = (projectId) => {
+  router.push({ name: "ProjectEdit", params: { id: projectId } });
+};
+
+const deleteProject = async (projectId) => {
+  await projectStore.deleteProject(projectId);
+};
+
+onMounted(fetchProjects);
 </script>
 
 <style scoped>

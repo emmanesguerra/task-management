@@ -40,7 +40,7 @@ export const useProjectStore = defineStore("projectStore", {
     // Update an existing project
     async updateProject(id, projectData) {
       try {
-        const response = await projectService.put(`/projects/${id}`, projectData);
+        const response = await projectService.updateProject(id, projectData);
         const updatedProject = new ProjectModel(response.data);
         const index = this.projects.findIndex((project) => project.id === id);
         if (index !== -1) {

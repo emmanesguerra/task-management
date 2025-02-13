@@ -14,8 +14,8 @@ export default class ProjectModel {
     this.id = id;
     this.name = name;
     this.description = description;
-    this.startDate = start_date;
-    this.endDate = end_date;
+    this.start_date = start_date;
+    this.end_date = end_date;
     this.status = status;
     this.budget = budget;
     this.createdAt = created_at;
@@ -26,14 +26,14 @@ export default class ProjectModel {
   // Helper to check if a project is active
   isActive() {
     const today = new Date();
-    return today >= new Date(this.startDate) && today <= new Date(this.endDate);
+    return today >= new Date(this.start_date) && today <= new Date(this.end_date);
   }
 
   // Method to get the project's duration in days
   getDuration() {
-    if (!this.startDate || !this.endDate) return 0;
-    const start = new Date(this.startDate);
-    const end = new Date(this.endDate);
+    if (!this.start_date || !this.end_date) return 0;
+    const start = new Date(this.start_date);
+    const end = new Date(this.end_date);
     return Math.ceil((end - start) / (1000 * 60 * 60 * 24)); // Days
   }
 
