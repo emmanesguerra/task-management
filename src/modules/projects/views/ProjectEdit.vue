@@ -1,33 +1,37 @@
 <template>
     <div>
         <h2>Edit Project</h2>
-        <ProjectForm :project="project" :isEdit="true" @submit="updateProject" />
+        <ProjectForm v-if="selectedProject" :project="selectedProject" :isEdit="true" @submitForm="updateProject" />
+        <p v-else>Loading project data...</p>
     </div>
 </template>
 
-<script>
-import { onMounted, ref } from "vue";
+<script setup>
+import { onMounted, computed, watchEffect } from "vue";
 import { useRoute } from "vue-router";
+import { useProjectStore } from "@/modules/projects/stores/projectStore";
 import ProjectForm from "../components/ProjectForm.vue";
-import { useProjectStore } from "../stores/projectStore";
 
-export default {
-    components: { ProjectForm },
-    setup() {
-        const route = useRoute();
-        const projectStore = useProjectStore();
-        const project = ref({});
+const route = useRoute();
+const projectStore = useProjectStore();
 
-        onMounted(async () => {
-            project.value = await projectStore.getProject(route.params.id);
-        });
+const selectedProject = computed(() => projectStore.selectedProject);
 
-        const updateProject = async (updatedProject) => {
-            await projectStore.updateProject(route.params.id, updatedProject);
-            // Navigate back or show feedback
-        };
+onMounted(async () => {
+    if (!projectStore.projects.length) {
+        await projectStore.fetchProjects();
+    }
 
-        return { project, updateProject };
-    },
+    if (!projectStore.selectedProject || projectStore.selectedProject.id !== Number(route.params.id)) {
+        projectStore.selectProject(Number(route.params.id));
+    }
+});
+
+watchEffect(() => {
+    projectStore.selectProject(Number(route.params.id));
+});
+
+const updateProject = async (updatedProject) => {
+    await projectStore.updateProject(route.params.id, updatedProject);
 };
 </script>
