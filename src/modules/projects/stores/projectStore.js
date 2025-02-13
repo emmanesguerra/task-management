@@ -54,7 +54,7 @@ export const useProjectStore = defineStore("projectStore", {
     // Delete a project
     async deleteProject(id) {
       try {
-        await projectService.delete(`/projects/${id}`);
+        await projectService.deleteProject(id);
         this.projects = this.projects.filter((project) => project.id !== id);
       } catch (error) {
         console.error("Error deleting project:", error);
